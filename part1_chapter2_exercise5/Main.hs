@@ -1,4 +1,4 @@
--- ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter2_exercise5
+-- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter2_exercise5
 -- :load Main
 main = do
     putStrLn $ "init: " ++ (show $ init [1, 2, 3, 4, 5])

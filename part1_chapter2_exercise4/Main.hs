@@ -1,4 +1,4 @@
--- ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter2_exercise4
+-- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter2_exercise4
 -- :load Main
 main = do
     putStrLn $ "last: " ++ (show $ last [1, 2, 3, 4, 5])
