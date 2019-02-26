@@ -43,6 +43,12 @@ main = do
     putStrLn "frequencies \"Haskell\""
     putStrLn . show $ frequencies "Haskell"
 
+    putStrLn "chiSquared [2.0 3.0 4.0] [3.0 4.0 5.0]"
+    putStrLn . show $ chiSquared [2.0, 3.0, 4.0] [1.0, 1.0, 1.0]
+
+    putStrLn "rotate 1 \"Haskell\""
+    putStrLn . show $ rotate 1 "Haskell"
+
 lettterToInt :: Char -> Int
 lettterToInt x = (ord x) - (ord 'a')
 
@@ -70,3 +76,10 @@ count characterToCount text = length $ filter (\x -> x == characterToCount) text
 frequencies :: String -> [(Char, Float)]
 frequencies text =
     [(x, percent (count x text) (numberOfLowercaseCharacters text)) | x <- ['a' .. 'z']]
+
+chiSquared :: [Float] -> [Float] -> Float
+chiSquared observedFrequencies expectedFrequencies =
+    sum [((observedFrequency - expectedFrequency) ^ 2) / expectedFrequency | (observedFrequency, expectedFrequency) <- zip observedFrequencies expectedFrequencies]
+
+rotate :: Show a => Int -> [a] -> [a]
+rotate rotationFactor xs = (drop rotationFactor xs) ++ (take rotationFactor xs)
