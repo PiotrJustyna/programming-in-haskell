@@ -1,5 +1,5 @@
 -- option 1 (https://github.com/PiotrJustyna/haskell-anywhere):
--- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter5_exercise3
+-- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter5_exercise4
 -- option 2 (stack):
 -- stack ghci
 --
