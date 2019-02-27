@@ -5,6 +5,8 @@
 --
 -- :load Main
 import Data.Char
+import Data.List
+import Data.Maybe
 
 main = do
     putStrLn "lettterToInt 'a'"
@@ -49,6 +51,12 @@ main = do
     putStrLn "rotate 1 \"Haskell\""
     putStrLn . show $ rotate 1 "Haskell"
 
+    putStrLn "crackCeasarCipher \"kdvnhoo lv ixq\""
+    putStrLn . show $ crackCeasarCipher "kdvnhoo lv ixq"
+
+    putStrLn "crackCeasarCipher \"vscd mywzboroxcsyxc kbo ecopev\""
+    putStrLn . show $ crackCeasarCipher "vscd mywzboroxcsyxc kbo ecopev"
+
 lettterToInt :: Char -> Int
 lettterToInt x = (ord x) - (ord 'a')
 
@@ -73,9 +81,9 @@ numberOfLowercaseCharacters text = length $ filter isLower text
 count :: Char -> String -> Int
 count characterToCount text = length $ filter (\x -> x == characterToCount) text
 
-frequencies :: String -> [(Char, Float)]
+frequencies :: String -> [Float]
 frequencies text =
-    [(x, percent (count x text) (numberOfLowercaseCharacters text)) | x <- ['a' .. 'z']]
+    [percent (count x text) (numberOfLowercaseCharacters text) | x <- ['a' .. 'z']]
 
 chiSquared :: [Float] -> [Float] -> Float
 chiSquared observedFrequencies expectedFrequencies =
@@ -83,3 +91,13 @@ chiSquared observedFrequencies expectedFrequencies =
 
 rotate :: Show a => Int -> [a] -> [a]
 rotate rotationFactor xs = (drop rotationFactor xs) ++ (take rotationFactor xs)
+
+-- Character frequencies of a large volume of text.
+table :: [Float]
+table = [8.1, 1.5, 2.8, 4.2, 12.7, 2.2, 2.0, 6.1, 7.0, 0.2, 0.8, 4.0, 2.4, 6.7, 7.5, 1.9, 0.1, 6.0, 6.3, 9.0, 2.8, 1.0, 2.4, 0.2, 2.0, 0.1]
+
+crackCeasarCipher :: String -> String
+crackCeasarCipher text = encode (-factor) text
+    where
+        factor = fromMaybe 0 (elemIndex (minimum chiSquaredResults) chiSquaredResults)
+        chiSquaredResults = [chiSquared (rotate n (frequencies text)) table | n <- [0 .. 25]]
