@@ -1,4 +1,8 @@
+-- option 1 (https://github.com/PiotrJustyna/haskell-anywhere):
 -- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter2_exercise5
+-- option 2 (stack):
+-- stack ghci
+--
 -- :load Main
 main = do
     putStrLn $ "init: " ++ (show $ init [1, 2, 3, 4, 5])
