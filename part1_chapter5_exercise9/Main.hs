@@ -11,4 +11,4 @@ main = do
     putStrLn . show $ scalarProduct [1, 2, 3] [4, 5, 6]
 
 scalarProduct :: [Int] -> [Int] -> Int
-scalarProduct xs ys = sum [ (xs !! index) * (ys !! index) | index <- [0 .. ((length xs) - 1)]]
+scalarProduct xs ys = sum [(xs !! index) * (ys !! index) | index <- [0 .. ((length xs) - 1)]]
