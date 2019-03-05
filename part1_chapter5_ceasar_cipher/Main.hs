@@ -2,6 +2,8 @@
 -- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter5_ceasar_cipher
 -- option 2 (stack):
 -- stack ghci
+-- option 3 (ghci):
+-- ghci
 --
 -- :load Main
 import Data.Char

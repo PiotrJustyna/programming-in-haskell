@@ -2,6 +2,8 @@
 -- ./ghci.bat C:\Users\piotr_justyna\Documents\github\programming-in-haskell\part1_chapter3_exercise3
 -- option 2 (stack):
 -- stack ghci
+-- option 3 (ghci):
+-- ghci
 --
 -- :load Main
 main = do
