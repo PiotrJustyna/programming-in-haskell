@@ -23,7 +23,7 @@ curried = \x y -> x - y
 -- so very happy the below was my first guess :D
 -- curry :: (a, b) -> c -> (a -> b -> c)
 -- The actual signature is taken from the solutions sections, though.
--- I had to make sure what the exercise really is.
+-- I had to make sure what the exercise really was.
 curry' :: (Num a, Num b, Num c) => ((a, b) -> c) -> (a -> b -> c)
 curry' x = \y z -> x (y, z)
 
