@@ -6,7 +6,7 @@
 -- ghci
 --
 -- :load Main
-import Data.List
+import Data.Char
 
 type Bit = Int
 
@@ -15,12 +15,22 @@ main = do
     putStrLn . show $ bit2Int [1, 0, 0]
 
     putStrLn "int2bit 4"
-    putStrLn . show $ int2bit 1
-    putStrLn . show $ int2bit 2
-    putStrLn . show $ int2bit 3
     putStrLn . show $ int2bit 4
-    putStrLn . show $ int2bit 13
+
+    putStrLn "int2bit 16"
     putStrLn . show $ int2bit 16
+
+    putStrLn "make8 [1, 0, 1]"
+    putStrLn . show $ make8 [1, 0, 1]
+
+    putStrLn "encode \"abc\""
+    putStrLn . show $ encode "abc"
+
+    putStrLn "chop8 [1, 0, 1, 0, 1, 0, 1, 0, 1, 1]"
+    putStrLn . show $ chop8 [1, 0, 1, 0, 1, 0, 1, 0, 1, 1]
+
+    putStrLn "decode [0,1,1,0,0,0,0,1,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,1]"
+    putStrLn . show $ decode [0,1,1,0,0,0,0,1,0,1,1,0,0,0,1,0,0,1,1,0,0,0,1,1]
 
 bit2Int :: [Bit] -> Int
 bit2Int bits = foldr (\x y -> x + (2 * y)) 0 (reverse bits)
@@ -30,3 +40,18 @@ bit2Int bits = foldr (\x y -> x + (2 * y)) 0 (reverse bits)
 int2bit :: Int -> [Bit]
 int2bit 0 = []
 int2bit x = (int2bit (x `div` 2)) ++ [x `mod` 2]
+
+make8 :: [Bit] -> [Bit]
+make8 bits = take 8 (padding ++ bits)
+    where
+        padding = take (8 - (length bits)) (repeat 0)
+
+encode :: String -> [Bit]
+encode = concat . map (make8 . int2bit . ord)
+
+chop8 :: [Bit] -> [[Bit]]
+chop8 [] = []
+chop8 xs = (take 8 xs) : (chop8 (drop 8 xs))
+
+decode :: [Bit] -> String
+decode bits = map (chr . bit2Int . make8) (chop8 bits)
