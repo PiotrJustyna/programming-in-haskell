@@ -7,11 +7,25 @@
 --
 -- :load Main
 main = do
+    putStrLn "Propositions:"
     putStrLn . show $ Const True
     putStrLn . show $ Var 'A'
     putStrLn . show $ Not (Const True)
     putStrLn . show $ And (Const True) (Const False)
     putStrLn . show $ Imply (Const True) (Const False)
+
+    putStrLn "evaluate substitutions (Const True)"
+    putStrLn . show $ evaluate substitutions (Const True)
+
+    putStrLn "evaluate ([] :: Substitution) (Const True)"
+    putStrLn . show $ evaluate ([] :: Substitution) (Const True)
+
+    where
+        substitutions = [('A', True), ('B', False)]
+
+type Association key value = [(key, value)]
+
+type Substitution = Association Char Bool
 
 data Proposition =
     Const Bool
@@ -20,3 +34,6 @@ data Proposition =
     | And Proposition Proposition
     | Imply Proposition Proposition
     deriving Show
+
+evaluate :: Substitution -> Proposition -> Bool
+evaluate _ (Const x) = x
