@@ -53,6 +53,21 @@ main = do
     putStrLn "evaluate substitutions (Imply (Var 'B') (Var 'A'))"
     putStrLn . show $ evaluate substitutions (Imply (Var 'B') (Var 'A'))
 
+    putStrLn "getVariables (Const True)"
+    putStrLn . show $ getVariables (Const True)
+
+    putStrLn "getVariables (Var 'A')"
+    putStrLn . show $ getVariables (Var 'A')
+
+    putStrLn "getVariables (Not (Var 'A'))"
+    putStrLn . show $ getVariables (Not (Var 'A'))
+
+    putStrLn "getVariables (And (Var 'A') (Var 'B'))"
+    putStrLn . show $ getVariables (And (Var 'A') (Var 'B'))
+
+    putStrLn "getVariables (Imply (Var 'B') (Var 'A'))"
+    putStrLn . show $ getVariables (Imply (Var 'B') (Var 'A'))
+
     where
         substitutions = [('A', True), ('B', False)]
 
@@ -79,3 +94,10 @@ evaluate substitutions (Var variableName) = find variableName substitutions
 evaluate substitutions (Not proposition) = not (evaluate substitutions proposition)
 evaluate substitutions (And proposition1 proposition2) = (evaluate substitutions proposition1) && (evaluate substitutions proposition2)
 evaluate substitutions (Imply proposition1 proposition2) = (evaluate substitutions proposition1) <= (evaluate substitutions proposition2)
+
+getVariables :: Proposition -> [Char]
+getVariables (Const _) = []
+getVariables (Var variableName) = [variableName]
+getVariables (Not proposition) = getVariables proposition
+getVariables (And proposition1 proposition2) = (getVariables proposition1) ++ (getVariables proposition2)
+getVariables (Imply proposition1 proposition2) = (getVariables proposition1) ++ (getVariables proposition2)
