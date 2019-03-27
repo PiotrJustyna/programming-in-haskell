@@ -53,29 +53,41 @@ main = do
     putStrLn "evaluate substitutions (Imply (Var 'B') (Var 'A'))"
     putStrLn . show $ evaluate substitutions (Imply (Var 'B') (Var 'A'))
 
-    putStrLn "getVariables (Const True)"
-    putStrLn . show $ getVariables (Const True)
+    putStrLn "getVariableNames (Const True)"
+    putStrLn . show $ getVariableNames (Const True)
 
-    putStrLn "getVariables (Var 'A')"
-    putStrLn . show $ getVariables (Var 'A')
+    putStrLn "getVariableNames (Var 'A')"
+    putStrLn . show $ getVariableNames (Var 'A')
 
-    putStrLn "getVariables (Not (Var 'A'))"
-    putStrLn . show $ getVariables (Not (Var 'A'))
+    putStrLn "getVariableNames (Not (Var 'A'))"
+    putStrLn . show $ getVariableNames (Not (Var 'A'))
 
-    putStrLn "getVariables (And (Var 'A') (Var 'B'))"
-    putStrLn . show $ getVariables (And (Var 'A') (Var 'B'))
+    putStrLn "getVariableNames (And (Var 'A') (Var 'B'))"
+    putStrLn . show $ getVariableNames (And (Var 'A') (Var 'B'))
 
-    putStrLn "getVariables (Imply (Var 'B') (Var 'A'))"
-    putStrLn . show $ getVariables (Imply (Var 'B') (Var 'A'))
+    putStrLn "getVariableNames (Imply (Var 'B') (Var 'A'))"
+    putStrLn . show $ getVariableNames (Imply (Var 'B') (Var 'A'))
 
-    putStrLn "getAllPermutationsOfNBools 1"
-    putStrLn . show $ getAllPermutationsOfNBools 1
+    putStrLn "generateAllPermutationsOfNBools 1"
+    putStrLn . show $ generateAllPermutationsOfNBools 1
 
-    putStrLn "getAllPermutationsOfNBools 2"
-    putStrLn . show $ getAllPermutationsOfNBools 2
+    putStrLn "generateAllPermutationsOfNBools 2"
+    putStrLn . show $ generateAllPermutationsOfNBools 2
 
-    putStrLn "getAllPermutationsOfNBools 3"
-    putStrLn . show $ getAllPermutationsOfNBools 3
+    putStrLn "generateAllPermutationsOfNBools 3"
+    putStrLn . show $ generateAllPermutationsOfNBools 3
+
+    putStrLn "generateAllSubstitutions (Var 'A')"
+    putStrLn . show $ generateAllSubstitutions (Var 'A')
+
+    putStrLn "generateAllSubstitutions (And (Var 'A') (Var 'B'))"
+    putStrLn . show $ generateAllSubstitutions (And (Var 'A') (Var 'B'))
+
+    putStrLn "isTautology (And (Var 'A') (Var 'B'))"
+    putStrLn . show $ isTautology (And (Var 'A') (Var 'B'))
+
+    putStrLn "isTautology (Imply (Var 'A') (Var 'A'))"
+    putStrLn . show $ isTautology (Imply (Var 'A') (Var 'A'))
 
     where
         substitutions = [('A', True), ('B', False)]
@@ -104,13 +116,25 @@ evaluate substitutions (Not proposition) = not (evaluate substitutions propositi
 evaluate substitutions (And proposition1 proposition2) = (evaluate substitutions proposition1) && (evaluate substitutions proposition2)
 evaluate substitutions (Imply proposition1 proposition2) = (evaluate substitutions proposition1) <= (evaluate substitutions proposition2)
 
-getVariables :: Proposition -> [Char]
-getVariables (Const _) = []
-getVariables (Var variableName) = [variableName]
-getVariables (Not proposition) = getVariables proposition
-getVariables (And proposition1 proposition2) = (getVariables proposition1) ++ (getVariables proposition2)
-getVariables (Imply proposition1 proposition2) = (getVariables proposition1) ++ (getVariables proposition2)
+getVariableNames :: Proposition -> [Char]
+getVariableNames (Const _) = []
+getVariableNames (Var variableName) = [variableName]
+getVariableNames (Not proposition) = getVariableNames proposition
+getVariableNames (And proposition1 proposition2) = (getVariableNames proposition1) ++ (getVariableNames proposition2)
+getVariableNames (Imply proposition1 proposition2) = (getVariableNames proposition1) ++ (getVariableNames proposition2)
 
-getAllPermutationsOfNBools :: Int -> [[Bool]]
-getAllPermutationsOfNBools 1 = [[False], [True]]
-getAllPermutationsOfNBools n = [y : x | x <- getAllPermutationsOfNBools (n - 1), y <- [False, True]]
+generateAllPermutationsOfNBools :: Int -> [[Bool]]
+generateAllPermutationsOfNBools 1 = [[False], [True]]
+generateAllPermutationsOfNBools n = [y : x | x <- generateAllPermutationsOfNBools (n - 1), y <- [False, True]]
+
+removeDuplicates :: Eq a => [a] -> [a]
+removeDuplicates [] = []
+removeDuplicates (x:xs) = x : filter (/= x) (removeDuplicates xs)
+
+generateAllSubstitutions :: Proposition -> [Substitutions]
+generateAllSubstitutions proposition = map (zip uniqueVariableNames) (generateAllPermutationsOfNBools (length uniqueVariableNames))
+    where
+        uniqueVariableNames = removeDuplicates (getVariableNames proposition)
+
+isTautology :: Proposition -> Bool
+isTautology proposition = and [evaluate singleCollectionOfSubstitutions proposition | singleCollectionOfSubstitutions <- (generateAllSubstitutions proposition)]
