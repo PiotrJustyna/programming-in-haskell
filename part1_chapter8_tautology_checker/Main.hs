@@ -68,6 +68,15 @@ main = do
     putStrLn "getVariables (Imply (Var 'B') (Var 'A'))"
     putStrLn . show $ getVariables (Imply (Var 'B') (Var 'A'))
 
+    putStrLn "getAllPermutationsOfNBools 1"
+    putStrLn . show $ getAllPermutationsOfNBools 1
+
+    putStrLn "getAllPermutationsOfNBools 2"
+    putStrLn . show $ getAllPermutationsOfNBools 2
+
+    putStrLn "getAllPermutationsOfNBools 3"
+    putStrLn . show $ getAllPermutationsOfNBools 3
+
     where
         substitutions = [('A', True), ('B', False)]
 
@@ -101,3 +110,7 @@ getVariables (Var variableName) = [variableName]
 getVariables (Not proposition) = getVariables proposition
 getVariables (And proposition1 proposition2) = (getVariables proposition1) ++ (getVariables proposition2)
 getVariables (Imply proposition1 proposition2) = (getVariables proposition1) ++ (getVariables proposition2)
+
+getAllPermutationsOfNBools :: Int -> [[Bool]]
+getAllPermutationsOfNBools 1 = [[False], [True]]
+getAllPermutationsOfNBools n = [y : x | x <- getAllPermutationsOfNBools (n - 1), y <- [False, True]]
