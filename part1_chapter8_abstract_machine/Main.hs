@@ -7,14 +7,27 @@
 --
 -- :load Main
 main = do
-    putStrLn "evaluate (Value 5)"
-    putStrLn . show $ evaluate (Value 5)
+    putStrLn "evaluateExpression (Value 5)"
+    putStrLn . show $ evaluateExpression (Value 5)
 
-    putStrLn "evaluate (Add (Value 5) (Value 3))"
-    putStrLn . show $ evaluate (Add (Value 5) (Value 3))
+    putStrLn "evaluateExpression (Add (Value 5) (Value 3))"
+    putStrLn . show $ evaluateExpression (Add (Value 5) (Value 3))
 
 data Expression = Value Int | Add Expression Expression
 
-evaluate :: Expression -> Int
-evaluate (Value n) = n
-evaluate (Add expression1 expression2) = (evaluate expression1) + (evaluate expression2)
+data Operation = Evaluation Expression | Addition Int
+
+type ControlStack = [Operation]
+
+evaluateExpression :: Expression -> Int
+evaluateExpression (Value x) = x
+evaluateExpression (Add expression1 expression2) = (evaluateExpression expression1) + (evaluateExpression expression2)
+
+evaluateExpressionWithControlStack :: Expression -> ControlStack -> Int
+evaluateExpressionWithControlStack (Value x) y = execute x y
+evaluateExpressionWithControlStack (Add expression1 expression2) y = evaluateExpressionWithControlStack expression1 ((Evaluation expression2) : y)
+
+execute :: Int -> ControlStack -> Int
+execute x [] = x
+execute x ((Evaluation expression) : controlStack) = evaluateExpressionWithControlStack expression ((Addition x) : controlStack)
+execute x ((Addition y) : controlStack) = execute (x + y) controlStack
