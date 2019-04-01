@@ -13,6 +13,12 @@ main = do
     putStrLn "evaluateExpression (Add (Value 5) (Value 3))"
     putStrLn . show $ evaluateExpression (Add (Value 5) (Value 3))
 
+    putStrLn "execute 3 [Addition 6]"
+    putStrLn . show $ execute 3 [Addition 6]
+
+    putStrLn "execute 3 [Addition 6, Evaluation (Value 5)]"
+    putStrLn . show $ execute 3 [Addition 6, Evaluation (Value 5)]
+
 data Expression = Value Int | Add Expression Expression
 
 data Operation = Evaluation Expression | Addition Int
