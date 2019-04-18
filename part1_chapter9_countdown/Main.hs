@@ -55,6 +55,15 @@ main = do
     putStrLn "evaluate expression1:"
     putStrLn . show $ evaluate expression1
 
+    putStrLn "subSequences [1, 2, 3]"
+    putStrLn . show $ subSequences [1, 2, 3]
+
+    putStrLn "interleave 4 [1, 2, 3]"
+    putStrLn . show $ interleave 4 [1, 2, 3]
+
+    putStrLn "permutations [1, 2, 3]"
+    putStrLn . show $ permutations [1, 2, 3]
+
 expression1 :: Expression
 expression1 = Application Add (Value (5 :: Int)) (Application Multiply (Value (2 :: Int)) (Value (3 :: Int)))
 
@@ -90,7 +99,7 @@ apply Divide x y = x `div` y
 
 values :: Expression -> [Int]
 values (Value x) = [x]
-values (Application operator expression1 expression2) = (values expression1) ++ (values expression2)
+values (Application operator expression1 (expression2)) = (values expression1) ++ (values expression2)
 
 evaluate :: Expression -> Int
 evaluate (Value x) =
@@ -99,3 +108,20 @@ evaluate (Value x) =
         else error "Expression value should be positive."
 evaluate (Application operator expression1 expression2) =
     apply operator (evaluate expression1) (evaluate expression2)
+
+subSequences :: [a] -> [[a]]
+subSequences [] = [[]]
+subSequences (x:xs) = ys ++ [x:n | n <- ys]
+    where
+        ys = subSequences xs
+
+interleave :: a -> [a] -> [[a]]
+interleave x [] = [[x]]
+interleave x list = [(left y) ++ [x] ++ (right y) | y <- [0 .. (length list)]]
+    where
+        left n = take n list
+        right n = drop n list
+
+permutations :: [a] -> [[a]]
+permutations [] = [[]]
+permutations (x:xs) = concat (map (interleave x) (permutations xs))
