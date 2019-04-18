@@ -43,6 +43,12 @@ main = do
     putStrLn "apply Divide 4 2:"
     putStrLn . show $ apply Divide 4 2
 
+    putStrLn "Expression: Value (5 :: Int):"
+    putStrLn . show $ Value (5 :: Int)
+
+    putStrLn "Expression: Add (Value (5 :: Int)) (Multiply (Value (2 :: Int)) (Value (3 :: Int))):"
+    putStrLn . show $ Application Add (Value (5 :: Int)) (Application Multiply (Value (2 :: Int)) (Value (3 :: Int)))
+
 data Operator = Add | Subtract | Multiply | Divide
 
 instance Show Operator where
@@ -50,6 +56,16 @@ instance Show Operator where
     show Subtract = "-"
     show Multiply = "*"
     show Divide = "/"
+
+data Expression = Value Int | Application Operator Expression Expression
+
+instance Show Expression where
+    show (Value x) = show x
+    show (Application operator expression1 expression2) =
+        (brackets expression1) ++ show operator ++ (brackets expression2)
+        where
+            brackets (Value x) = show x
+            brackets application = "(" ++ show application ++ ")"
 
 isValid :: Operator -> Int -> Int -> Bool
 isValid Add _ _ = True
