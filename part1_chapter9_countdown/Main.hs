@@ -46,8 +46,17 @@ main = do
     putStrLn "Expression: Value (5 :: Int):"
     putStrLn . show $ Value (5 :: Int)
 
-    putStrLn "Expression: Add (Value (5 :: Int)) (Multiply (Value (2 :: Int)) (Value (3 :: Int))):"
-    putStrLn . show $ Application Add (Value (5 :: Int)) (Application Multiply (Value (2 :: Int)) (Value (3 :: Int)))
+    putStrLn "Expression: expression1:"
+    putStrLn $ show expression1
+
+    putStrLn "values expression1:"
+    putStrLn . show $ values expression1
+
+    putStrLn "evaluate expression1:"
+    putStrLn . show $ evaluate expression1
+
+expression1 :: Expression
+expression1 = Application Add (Value (5 :: Int)) (Application Multiply (Value (2 :: Int)) (Value (3 :: Int)))
 
 data Operator = Add | Subtract | Multiply | Divide
 
@@ -78,3 +87,15 @@ apply Add x y = x + y
 apply Subtract x y = x - y
 apply Multiply x y = x * y
 apply Divide x y = x `div` y
+
+values :: Expression -> [Int]
+values (Value x) = [x]
+values (Application operator expression1 expression2) = (values expression1) ++ (values expression2)
+
+evaluate :: Expression -> Int
+evaluate (Value x) =
+    if (x > 0)
+        then x
+        else error "Expression value should be positive."
+evaluate (Application operator expression1 expression2) =
+    apply operator (evaluate expression1) (evaluate expression2)
