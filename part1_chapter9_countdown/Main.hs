@@ -64,6 +64,12 @@ main = do
     putStrLn "permutations [1, 2, 3]"
     putStrLn . show $ permutations [1, 2, 3]
 
+    putStrLn "choices [1, 2]"
+    putStrLn . show $ choices [1, 2]
+
+    putStrLn "choices [1, 2, 3]"
+    putStrLn . show $ choices [1, 2, 3]
+
 expression1 :: Expression
 expression1 = Application Add (Value (5 :: Int)) (Application Multiply (Value (2 :: Int)) (Value (3 :: Int)))
 
@@ -125,3 +131,6 @@ interleave x list = [(left y) ++ [x] ++ (right y) | y <- [0 .. (length list)]]
 permutations :: [a] -> [[a]]
 permutations [] = [[]]
 permutations (x:xs) = concat (map (interleave x) (permutations xs))
+
+choices :: [a] -> [[a]]
+choices = concat . map permutations . subSequences
