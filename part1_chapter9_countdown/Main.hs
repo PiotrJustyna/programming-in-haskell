@@ -13,23 +13,47 @@ main = do
     putStrLn . show $ Multiply
     putStrLn . show $ Divide
 
-    putStrLn "isValid Add 1 3:"
-    putStrLn . show $ isValid Add 1 3
+    putStrLn "isValidOperation Add 1 3:"
+    putStrLn . show $ isValidOperation Add 1 3
 
-    putStrLn "isValid Subtract 1 3:"
-    putStrLn . show $ isValid Subtract 1 3
+    putStrLn "isValidOperation Subtract 1 3:"
+    putStrLn . show $ isValidOperation Subtract 1 3
 
-    putStrLn "isValid Subtract 3 1:"
-    putStrLn . show $ isValid Subtract 3 1
+    putStrLn "isValidOperation Subtract 3 1:"
+    putStrLn . show $ isValidOperation Subtract 3 1
 
-    putStrLn "isValid Multiply 1 3:"
-    putStrLn . show $ isValid Multiply 1 3
+    putStrLn "isValidOperation Multiply 1 3:"
+    putStrLn . show $ isValidOperation Multiply 1 3
 
-    putStrLn "isValid Divide 2 4:"
-    putStrLn . show $ isValid Divide 2 4
+    putStrLn "isValidOperation Divide 2 4:"
+    putStrLn . show $ isValidOperation Divide 2 4
 
-    putStrLn "isValid Divide 4 2:"
-    putStrLn . show $ isValid Divide 4 2
+    putStrLn "isValidOperation Divide 4 2:"
+    putStrLn . show $ isValidOperation Divide 4 2
+
+    putStrLn "isValidOperation Divide 4 0:"
+    putStrLn . show $ isValidOperation Divide 4 0
+
+    putStrLn "isValidExpression (Application Add (Value 1) (Value 3)):"
+    putStrLn . show $ isValidExpression (Application Add (Value 1) (Value 3))
+
+    putStrLn "isValidExpression (Application Subtract (Value 1) (Value 3)):"
+    putStrLn . show $ isValidExpression (Application Subtract (Value 1) (Value 3))
+
+    putStrLn "isValidExpression (Application Subtract (Value 3) (Value 1)):"
+    putStrLn . show $ isValidExpression (Application Subtract (Value 3) (Value 1))
+
+    putStrLn "isValidExpression (Application Multiply (Value 1) (Value 3)):"
+    putStrLn . show $ isValidExpression (Application Multiply (Value 1) (Value 3))
+
+    putStrLn "isValidExpression (Application Divide (Value 2) (Value 4)):"
+    putStrLn . show $ isValidExpression (Application Divide (Value 2) (Value 4))
+
+    putStrLn "isValidExpression (Application Divide (Value 4) (Value 2):"
+    putStrLn . show $ isValidExpression (Application Divide (Value 4) (Value 2))
+
+    putStrLn "isValidExpression (Application Divide (Value 4) (Value 0):"
+    putStrLn . show $ isValidExpression (Application Divide (Value 4) (Value 0))
 
     putStrLn "apply Add 4 2:"
     putStrLn . show $ apply Add 4 2
@@ -64,14 +88,44 @@ main = do
     putStrLn "permutations [1, 2, 3]"
     putStrLn . show $ permutations [1, 2, 3]
 
-    putStrLn "choices [1, 2]"
-    putStrLn . show $ choices [1, 2]
+    putStrLn "allPossibleChoices [1, 2]"
+    putStrLn . show $ allPossibleChoices [1, 2]
 
-    putStrLn "choices [1, 2, 3]"
-    putStrLn . show $ choices [1, 2, 3]
+    putStrLn "allPossibleChoices [1, 2, 3]"
+    putStrLn . show $ allPossibleChoices [1, 2, 3]
+
+    putStrLn "expression2:"
+    putStrLn . show $ expression2
+
+    putStrLn "isASolution expression2 [1, 3, 7, 10, 25, 50] 765"
+    putStrLn . show $ isASolution expression2 [1, 3, 7, 10, 25, 50] 765
+
+    putStrLn "allPossibleSplits [1, 2, 3, 4]"
+    putStrLn . show $ allPossibleSplits [1, 2, 3, 4]
+
+    putStrLn "allPossibleOperations (Value (1 :: Int)) (Value (2 :: Int)):"
+    putStrLn . show $ allPossibleOperations (Value (1 :: Int)) (Value (2 :: Int))
+
+    putStrLn "allPossibleOperations expression1 expression2:"
+    putStrLn . show $ allPossibleOperations expression1 expression2
+
+    putStrLn "allPossibleExpressions [1, 2, 3]"
+    putStrLn . show $ allPossibleExpressions [1, 2, 3]
+
+    putStrLn "allPossibleSolutions [1, 3, 7, 10, 25, 50] 765"
+    putStrLn . show $ allPossibleSolutions [1, 3, 7, 10, 25, 50] 765
+
+    putStrLn "allPossibleSolutions [1, 2, 3] 6"
+    putStrLn . show $ allPossibleSolutions [1, 2, 3] 6
 
 expression1 :: Expression
 expression1 = Application Add (Value (5 :: Int)) (Application Multiply (Value (2 :: Int)) (Value (3 :: Int)))
+
+expression2 :: Expression
+expression2 = Application
+    Multiply
+    (Application Add (Value (1 :: Int)) (Value (50 :: Int)))
+    (Application Subtract (Value (25 :: Int)) (Value (10 :: Int)))
 
 data Operator = Add | Subtract | Multiply | Divide
 
@@ -91,11 +145,21 @@ instance Show Expression where
             brackets (Value x) = show x
             brackets application = "(" ++ show application ++ ")"
 
-isValid :: Operator -> Int -> Int -> Bool
-isValid Add _ _ = True
-isValid Subtract x y = x > y
-isValid Multiply _ _ = True
-isValid Divide x y = x `mod` y == 0
+isValidOperation :: Operator -> Int -> Int -> Bool
+isValidOperation Add _ _ = True
+isValidOperation Subtract x y = x > y
+isValidOperation Multiply _ _ = True
+isValidOperation Divide x y = y /= 0 && x `mod` y == 0
+
+isValidExpression :: Expression -> Bool
+isValidExpression (Value x) = x > 0
+isValidExpression (Application operator expression1 expression2) =
+    isValidExpression expression1 &&
+    isValidExpression expression2 &&
+    isValidOperation operator evaluatedExpression1 evaluatedExpression2
+    where
+        evaluatedExpression1 = evaluate expression1
+        evaluatedExpression2 = evaluate expression2
 
 apply :: Operator -> Int -> Int -> Int
 apply Add x y = x + y
@@ -132,5 +196,36 @@ permutations :: [a] -> [[a]]
 permutations [] = [[]]
 permutations (x:xs) = concat (map (interleave x) (permutations xs))
 
-choices :: [a] -> [[a]]
-choices = concat . map permutations . subSequences
+allPossibleChoices :: [a] -> [[a]]
+allPossibleChoices = concat . map permutations . subSequences
+
+isASolution :: Expression -> [Int] -> Int -> Bool
+isASolution expression numbers target =
+    elem (values expression) (allPossibleChoices numbers) &&
+    (evaluate expression) == target
+
+allPossibleSplits :: [a] -> [([a], [a])]
+allPossibleSplits list = [splitAt pivot list | pivot <- [1 .. ((length list) - 1)]]
+
+allPossibleOperations :: Expression -> Expression -> [Expression]
+allPossibleOperations expression1 expression2 =
+    [Application operator expression1 expression2 |
+        operator <- [Add, Subtract, Multiply, Divide]]
+
+allPossibleExpressions :: [Int] -> [Expression]
+allPossibleExpressions [] = []
+allPossibleExpressions [x] = [Value x]
+allPossibleExpressions xs =
+    [bothSidesExpressions |
+        (leftSideValues, rightSideValues) <- allPossibleSplits xs,
+        leftSideExpression <- allPossibleExpressions leftSideValues,
+        rightSideExpression <- allPossibleExpressions rightSideValues,
+        bothSidesExpressions <- allPossibleOperations leftSideExpression rightSideExpression]
+
+allPossibleSolutions :: [Int] -> Int -> [Expression]
+allPossibleSolutions numbers target =
+    [expression |
+        singleChoice <- allPossibleChoices numbers,
+        expression <- allPossibleExpressions singleChoice,
+        isValidExpression expression,
+        isASolution expression numbers target]
