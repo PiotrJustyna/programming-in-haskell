@@ -36,7 +36,7 @@ isChoice [] _ = True
 isChoice (x:xs) [] = False
 isChoice baseList (y:ys) =
     (elem y baseList) &&
-    isChoice (removeFirstOccurence y baseList) ys
+    (isChoice (removeFirstOccurence y baseList) ys)
 
 removeFirstOccurence :: Eq a => a -> [a] -> [a]
 removeFirstOccurence x (y:ys) =
