@@ -1,0 +1,39 @@
+	Mon Apr 29 14:21 2019 Time and Allocation Profiling Report  (Final)
+
+	   Main.exe +RTS -p -RTS
+
+	total time  =        0.00 secs   (0 ticks @ 1000 us, 1 processor)
+	total alloc =     105,584 bytes  (excludes profiling overheads)
+
+COST CENTRE    MODULE           SRC                     %time %alloc
+
+putRow         Main             Main.hs:(25,1)-(28,52)    0.0   45.0
+putBoardHelper Main             Main.hs:(37,1)-(45,46)    0.0    1.1
+putBoard       Main             Main.hs:31:1-84           0.0    1.8
+main           Main             Main.hs:(9,1)-(17,21)     0.0   18.1
+CAF            GHC.IO.Handle.FD <entire-module>           0.0   32.9
+
+
+                                                                                                       individual      inherited
+COST CENTRE                         MODULE                   SRC                    no.     entries  %time %alloc   %time %alloc
+
+MAIN                                MAIN                     <built-in>             109          0    0.0    0.5     0.0  100.0
+ CAF                                GHC.IO.Handle.Text       <entire-module>        207          0    0.0    0.1     0.0    0.1
+ CAF                                GHC.IO.Handle.FD         <entire-module>        145          0    0.0   32.9     0.0   32.9
+ CAF                                GHC.IO.Encoding.CodePage <entire-module>        136          0    0.0    0.2     0.0    0.2
+ CAF                                GHC.IO.Encoding          <entire-module>        135          0    0.0    0.1     0.0    0.1
+ CAF                                Main                     <entire-module>        116          0    0.0    0.2     0.0   20.2
+  initial                           Main                     Main.hs:20:1-25        220          1    0.0    0.0     0.0    0.0
+  main                              Main                     Main.hs:(9,1)-(17,21)  218          1    0.0    4.3     0.0   20.1
+   putBoard                         Main                     Main.hs:31:1-84        221          1    0.0    1.8     0.0    8.2
+    putRow                          Main                     Main.hs:(25,1)-(28,52) 223          5    0.0    6.4     0.0    6.4
+   putBoard'                        Main                     Main.hs:34:1-40        225          1    0.0    0.0     0.0    7.6
+    putBoardHelper                  Main                     Main.hs:(37,1)-(45,46) 226          5    0.0    1.1     0.0    7.6
+     putBoardHelper.currentRowIndex Main                     Main.hs:45:9-46        231          5    0.0    0.1     0.0    0.1
+     putRow                         Main                     Main.hs:(25,1)-(28,52) 229          5    0.0    6.4     0.0    6.4
+ main                               Main                     Main.hs:(9,1)-(17,21)  219          0    0.0   13.7     0.0   46.0
+  putBoard                          Main                     Main.hs:31:1-84        222          0    0.0    0.0     0.0   16.1
+   putRow                           Main                     Main.hs:(25,1)-(28,52) 224          0    0.0   16.1     0.0   16.1
+  putBoard'                         Main                     Main.hs:34:1-40        227          0    0.0    0.0     0.0   16.1
+   putBoardHelper                   Main                     Main.hs:(37,1)-(45,46) 228          0    0.0    0.0     0.0   16.1
+    putRow                          Main                     Main.hs:(25,1)-(28,52) 230          0    0.0   16.1     0.0   16.1
