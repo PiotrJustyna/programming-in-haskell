@@ -6,8 +6,10 @@
 -- ghci
 --
 -- :load Main
+import System.IO
+
 main = do
-    clear
+    hSetBuffering stdout NoBuffering
     life glider
 
 type Position = (Int, Int)
@@ -77,7 +79,7 @@ births board =
 
 removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates [] = []
-removeDuplicates (x:xs) = x:filter (/= x) xs
+removeDuplicates (x:xs) = x:(removeDuplicates (filter (/= x) xs))
 
 nextGeneration :: Board -> Board
 nextGeneration board = (survivors board) ++ (births board)
@@ -86,8 +88,10 @@ life :: Board -> IO ()
 life board = do
     clear
     showCells board
-    a <- getChar
+    _ <- getChar
     life (nextGeneration board)
 
-wait :: Int -> IO ()
-wait x = sequence_ [return () | _ <- [1 .. x]]
+-- Not used to give more control to the executor.
+-- "_ <- getChar" used instead in the "life" function.
+-- wait :: Int -> IO ()
+-- wait x = sequence_ [return () | _ <- [1 .. x]]

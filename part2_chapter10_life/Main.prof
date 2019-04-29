@@ -1,0 +1,42 @@
+	Mon Apr 29 08:57 2019 Time and Allocation Profiling Report  (Final)
+
+	   Main.exe +RTS -p -RTS
+
+	total time  =        0.00 secs   (0 ticks @ 1000 us, 1 processor)
+	total alloc =      83,504 bytes  (excludes profiling overheads)
+
+COST CENTRE MODULE           SRC                     %time %alloc
+
+writeAt     Main             Main.hs:(30,1)-(32,15)    0.0    6.3
+showCells   Main             Main.hs:38:1-82           0.0    1.8
+life        Main             Main.hs:(86,1)-(90,31)    0.0    2.3
+goto        Main             Main.hs:35:1-68           0.0   11.2
+clear       Main             Main.hs:27:1-24           0.0   12.5
+CAF         GHC.IO.Exception <entire-module>           0.0    2.3
+CAF         GHC.IO.Handle.FD <entire-module>           0.0   62.4
+
+
+                                                                                 individual      inherited
+COST CENTRE   MODULE                   SRC                    no.     entries  %time %alloc   %time %alloc
+
+MAIN          MAIN                     <built-in>             109          0    0.0    0.8     0.0  100.0
+ CAF          GHC.TopHandler           <entire-module>        165          0    0.0    0.1     0.0    0.1
+ CAF          GHC.IO.Handle.FD         <entire-module>        145          0    0.0   62.4     0.0   62.4
+ CAF          GHC.IO.Exception         <entire-module>        143          0    0.0    2.3     0.0    2.3
+ CAF          GHC.IO.Encoding.CodePage <entire-module>        136          0    0.0    0.2     0.0    0.2
+ CAF          GHC.IO.Encoding          <entire-module>        135          0    0.0    0.1     0.0    0.1
+ CAF          Main                     <entire-module>        116          0    0.0    0.1     0.0    8.9
+  clear       Main                     Main.hs:27:1-24        220          1    0.0    0.4     0.0    0.4
+  glider      Main                     Main.hs:24:1-40        226          1    0.0    0.0     0.0    0.0
+  main        Main                     Main.hs:(9,1)-(11,15)  218          1    0.0    0.1     0.0    8.4
+   life       Main                     Main.hs:(86,1)-(90,31) 222          1    0.0    0.2     0.0    8.3
+    showCells Main                     Main.hs:38:1-82        225          1    0.0    1.8     0.0    8.1
+     writeAt  Main                     Main.hs:(30,1)-(32,15) 228          5    0.0    0.7     0.0    6.3
+      goto    Main                     Main.hs:35:1-68        230          5    0.0    5.6     0.0    5.6
+ main         Main                     Main.hs:(9,1)-(11,15)  219          0    0.0    0.0     0.0   25.2
+  clear       Main                     Main.hs:27:1-24        221          0    0.0   11.0     0.0   11.0
+  life        Main                     Main.hs:(86,1)-(90,31) 223          0    0.0    2.0     0.0   14.2
+   clear      Main                     Main.hs:27:1-24        224          0    0.0    1.1     0.0    1.1
+   showCells  Main                     Main.hs:38:1-82        227          0    0.0    0.0     0.0   11.1
+    writeAt   Main                     Main.hs:(30,1)-(32,15) 229          0    0.0    5.6     0.0   11.1
+     goto     Main                     Main.hs:35:1-68        231          0    0.0    5.6     0.0    5.6
