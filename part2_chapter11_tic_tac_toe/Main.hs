@@ -10,9 +10,7 @@ import Data.Char
 import Data.List
 import System.IO
 
-main = do
-    putStrLn "putGrid sampleGrid1:"
-    putGrid sampleGrid1
+main = tictactoe
 
 size :: Int
 size = 3
@@ -20,6 +18,8 @@ size = 3
 data Player = O | Blank | X deriving (Eq, Ord, Show)
 
 type Grid = [[Player]]
+
+type Position = (Int, Int)
 
 sampleGrid1 :: Grid
 sampleGrid1 = [[Blank, O, O], [O, X, O], [X, X, X]]
@@ -78,4 +78,69 @@ showPlayer X = ["   ", " X ", "   "]
 interleave :: a -> [a] -> [a]
 interleave x [] = []
 interleave x [y] = [y]
-interleave x (y:ys) = y : x : (interleave x ys) 
+interleave x (y:ys) = y : x : (interleave x ys)
+
+isValid :: Grid -> Int -> Bool
+isValid grid positionIndex =
+    (positionIndex >= 0) &&
+    (positionIndex < (size ^ 2)) &&
+    (concat grid !! positionIndex == Blank)
+
+move :: Grid -> Int -> Player -> [Grid]
+move grid positionIndex player =
+    if (isValid grid positionIndex)
+        then
+            [chop size (xs ++ (player:ys))]
+        else
+            []
+    where
+        (xs, Blank:ys) = splitAt positionIndex (concat grid)
+
+chop :: Int -> [a] -> [[a]]
+chop n [] = []
+chop n xs = take n xs : (chop n (drop n xs))
+
+getNaturalNumber :: String -> IO Int
+getNaturalNumber prompt =
+    do
+        putStr prompt
+        xs <- getLine
+        if (xs /= [] && all isDigit xs)
+            then
+                return (read xs)
+            else
+                do
+                    putStrLn "Error: invalid number."
+                    getNaturalNumber prompt
+
+tictactoe :: IO ()
+tictactoe = run empty O
+
+clear :: IO ()
+clear = putStr "\ESC[2J"
+
+goto :: Position -> IO ()
+goto (x, y) = putStr ("\ESC[" ++ (show y) ++ ";" ++ (show x) ++ "H")
+
+run :: Grid -> Player -> IO ()
+run grid player = do
+    clear
+    goto (1, 1)
+    putGrid grid
+    run' grid player
+
+run' :: Grid -> Player -> IO ()
+run' grid player
+    | doesWin O grid    = putStrLn $ "Player " ++ (show O) ++ " wins."
+    | doesWin X grid    = putStrLn $ "Player " ++ (show X) ++ " wins."
+    | isFull grid       = putStrLn $ "It's a draw."
+    | otherwise =
+        do  i <- getNaturalNumber (prompt player)
+            case (move grid i player) of
+                [] -> do
+                    putStrLn "Error: invalid move."
+                    run' grid player
+                [newGrid] -> run newGrid (next player)
+
+prompt :: Player -> String
+prompt player = "Player " ++ (show player) ++ ", enter your move:"
