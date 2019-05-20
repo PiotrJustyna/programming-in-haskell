@@ -10,12 +10,16 @@ import Data.Char
 import Data.List
 import System.IO
 
-main = tictactoe
+main = do
+    hSetBuffering stdout NoBuffering
+    tictactoe
 
 size :: Int
 size = 3
 
 data Player = O | Blank | X deriving (Eq, Ord, Show)
+
+data Tree a = Node a [Tree a] deriving Show
 
 type Grid = [[Player]]
 
@@ -31,6 +35,9 @@ next Blank = error "Argument does not apply in the context of \"next\""
 
 empty :: Grid
 empty = replicate size (replicate size Blank)
+
+depth :: Int
+depth = 9
 
 isFull :: Grid -> Bool
 isFull = all (/= Blank) . concat
@@ -144,3 +151,16 @@ run' grid player
 
 prompt :: Player -> String
 prompt player = "Player " ++ (show player) ++ ", enter your move:"
+
+gameTree :: Grid -> Player -> Tree Grid
+gameTree grid player = Node grid [gameTree newGrid (next player) | newGrid <- moves grid player]
+
+moves :: Grid -> Player -> [Grid]
+moves grid player
+    | won grid = []
+    | isFull grid = []
+    | otherwise = concat [move grid index player | index <- [0 .. ((size ^ 2) - 1)]]
+
+prune :: Int -> Tree a -> Tree a
+prune 0 (Node x _) = Node x []
+prune n (Node x ts) = Node x [prune (n - 1) t | t <- ts]
