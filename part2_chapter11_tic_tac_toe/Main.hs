@@ -121,7 +121,9 @@ getNaturalNumber prompt =
                     getNaturalNumber prompt
 
 tictactoe :: IO ()
-tictactoe = run empty O
+tictactoe =
+    -- run empty O  -- player versus player
+    play empty O    -- player versus computer
 
 clear :: IO ()
 clear = putStr "\ESC[2J"
@@ -164,3 +166,43 @@ moves grid player
 prune :: Int -> Tree a -> Tree a
 prune 0 (Node x _) = Node x []
 prune n (Node x ts) = Node x [prune (n - 1) t | t <- ts]
+
+minimax :: Tree Grid -> Tree (Grid, Player)
+minimax (Node grid [])
+    | doesWin O grid = Node (grid, O) []
+    | doesWin X grid = Node (grid, X) []
+    | otherwise = Node (grid, Blank) []
+minimax (Node grid tree)
+    | (turn grid) == O = Node (grid, minimum newTreePlayers) newTree
+    | (turn grid) == X = Node (grid, maximum newTreePlayers) newTree
+    where
+        newTree = map minimax tree
+        newTreePlayers = [newTreePlayer | Node (newTreeGrid, newTreePlayer) subTrees <- newTree]
+
+bestMove :: Grid -> Player -> Grid
+bestMove grid player = head [newGrid | Node (newGrid, newPlayer) newTreeSubtree <- newTree, newPlayer == bestPlayer]
+    where
+        prunedTree = prune depth  (gameTree grid player)
+        Node (_, bestPlayer) newTree = minimax prunedTree
+
+play :: Grid -> Player -> IO ()
+play grid player = do
+    clear
+    goto (1, 1)
+    putGrid grid
+    play' grid player
+
+play' :: Grid -> Player -> IO ()
+play' grid player
+    | doesWin O grid    = putStrLn $ "Player " ++ (show O) ++ " wins."
+    | doesWin X grid    = putStrLn $ "Player " ++ (show X) ++ " wins."
+    | isFull grid       = putStrLn $ "It's a draw."
+    | player == O = do
+        index <- getNaturalNumber (prompt player)
+        case move grid index player of
+            [] -> do
+                putStrLn "ERROR: Invalid move."
+                play' grid player
+            [newGrid] -> play newGrid (next player)
+    | player == X = do
+        (play $! (bestMove grid player)) (next player)
