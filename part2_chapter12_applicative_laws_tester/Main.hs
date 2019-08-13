@@ -23,6 +23,7 @@ main = do
     putStrLn "---"
     putStrLn . show $ (pure id) <*> maybeAWord
 
+    putStrLn ""
     putStrLn "Applicative law 2:"
     putStrLn "pure (g x) = (pure g) <*> (pure x)"
     putStrLn "---"
@@ -39,6 +40,23 @@ main = do
     putStrLn . show $ ((pure (customLength maybeAWord)) :: (Maybe Int))
     putStrLn . show $ (pure customLength) <*> ((pure maybeAWord) :: (Maybe (Maybe String)))
 
+    putStrLn ""
+    putStrLn "Applicative law 3:"
+    putStrLn "x <*> (pure y) = pure (\\g -> g y) <*> x"
+    putStrLn "---"
+    
+    putStrLn ""
+    putStrLn "Example 1:"
+    putStrLn "---"
+    putStrLn . show $ x <*> (pure "Hello!")
+    putStrLn . show $ (pure (\z -> z "Hello!") <*> x)
+
+    putStrLn ""
+    putStrLn "Example 2:"
+    putStrLn "---"
+    putStrLn . show $ x' <*> (pure "Hello!")
+    putStrLn . show $ (pure (\z -> z "Hello!") <*> x')
+
 listOfWords :: [String]
 listOfWords = ["Hello World!"]
 
@@ -48,3 +66,9 @@ maybeAWord = Just "Hello World!"
 customLength :: (Maybe String) -> Int
 customLength (Just x) = length x
 customLength Nothing = 0
+
+x :: Maybe (a -> a)
+x = Just id
+
+x' :: [String -> String]
+x' = [reverse, reverse]
