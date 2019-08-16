@@ -57,6 +57,26 @@ main = do
     putStrLn . show $ x' <*> (pure "Hello!")
     putStrLn . show $ (pure (\z -> z "Hello!") <*> x')
 
+    -- This example I found in the "learn you a haskell book"
+    -- and, at least to me, it makes the law much clearer.
+    -- *sigh* I need practice...
+    putStrLn ""
+    putStrLn "Example 3:"
+    putStrLn "---"
+    putStrLn . show $ x' <*> (pure "Hello!")
+    putStrLn . show $ (pure ($ "Hello!") <*> x')
+
+    putStrLn ""
+    putStrLn "Applicative law 4:"
+    putStrLn "x <*> (y <*> z) = (pure (.) <*> x <*> y) <*> z)"
+    putStrLn "---"
+    
+    putStrLn ""
+    putStrLn "Example 1:"
+    putStrLn "---"
+    putStrLn . show $ x'' <*> (x' <*> ["Hello!"])
+    putStrLn . show $ (pure (.) <*> x'' <*> x') <*> ["Hello!"]
+
 listOfWords :: [String]
 listOfWords = ["Hello World!"]
 
@@ -71,4 +91,7 @@ x :: Maybe (a -> a)
 x = Just id
 
 x' :: [String -> String]
-x' = [reverse, reverse]
+x' = [reverse, reverse . reverse]
+
+x'' :: [String -> String]
+x'' = [(++ "_silly_suffix"), ("silly_prefix_" ++)]
