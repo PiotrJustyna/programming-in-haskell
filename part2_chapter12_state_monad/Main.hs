@@ -6,7 +6,7 @@
 -- ghci
 --
 -- :load Main
-import Data.Functor
+import Control.Applicative
 
 type State = Int
 
@@ -14,19 +14,54 @@ newtype StateTransformer a = S (State -> (a, State))
 
 -- Is this weird/clever or am I just tired?
 apply :: StateTransformer a -> State -> (a, State)
-apply (S stateTransformer) state = stateTransformer state
+apply (S transformer) state = transformer state
 
 -- functor
 instance Functor StateTransformer where
     -- fmap :: (a -> b) -> StateTransformer a -> StateTransformer b
-    fmap function stateTransformer = S (\state1 -> let (x, state2) = apply stateTransformer state1 in (function x, state2))
+    fmap function transformer = S (\state1 ->
+        let (x, state2) = apply transformer state1 in (function x, state2))
+
+instance Applicative StateTransformer where
+    -- pure :: a -> StateTransformer a
+    pure x = S (\y -> (x, y))
+    -- (<*>) :: StateTransformer (a -> b) -> StateTransformer a -> StateTransformer b
+    functionStateTransformer <*> valueStateTransformer = S (\state1 ->
+        let (f, state2) = apply functionStateTransformer state1
+            (x, state3) = apply valueStateTransformer state2 in (f x, state3))
 
 main = do
-    putStrLn "Ad hoc state transformer (StateTransformer type not used):"
-    putStrLn . show . (\x -> let (newValue, newState) = (x + 1, x + 1) in (newValue, newState)) $ (5 :: Int)
+    putStrLn "Ad hoc simple value state transformer applied (StateTransformer type not used):"
+    putStrLn . show . (\x -> (x, x)) $ (5 :: Int)
 
     putStrLn ""
     putStrLn "Functor implementation for StateTransformer:"
-    putStrLn . show $ apply resultStateTransformer (1 :: Int)
+    putStrLn . show $ (apply ((+5) <$> valueStateTransformer)) (1 :: Int)
+
+    putStrLn ""
+    putStrLn "Applicative implementation for StateTransformer, example 1:"
+    putStrLn . show $ apply resultStateTransformer1 (1 :: Int)
+
+    -- ^^^ order of operations:
+    -- 1. starting state is 1
+    -- 2. (state (1) stays unchanged and the state transformer function is returned to be applied to the result of the next step)
+    -- 3. (+2) is applied to the state (now the state is 3) and the state transformer's previous version of the state (1) gets incremented by 1. The result is (2, 3)
+    -- 4. now the function from step 2 (*2) can finally be applied to the value from step 3 (2), resulting in (4, 3)
+
+    putStrLn ""
+    putStrLn "Applicative implementation for StateTransformer, example 2:"
+    putStrLn . show $ apply resultStateTransformer2 (1 :: Int)
+
+    -- ^^^ order of operations:
+    -- 1. starting state is 1
+    -- 2. (state (1) gets multiplied by 3 and the state transformer function is returned to be applied to the result of the next step)
+    -- 3. (+2) is applied to the state (now the state is 5) and the state transformer's previous version of the state (3) gets incremented by 1. The result is (4, 5)
+    -- 4. now the function from step 2 (*2) can finally be applied to the value from step 3 (4), resulting in (8, 5)
+
+
     where
-        resultStateTransformer = (+5) <$> S (\x -> (x + 1, x + 1))
+        valueStateTransformer = S (\x -> (x + 1, x + 2))
+        functionStateTransformer1 = S (\x -> ((\y -> y * 2), x))
+        resultStateTransformer1 = functionStateTransformer1 <*> valueStateTransformer
+        functionStateTransformer2 = S (\x -> ((\y -> y * 2), x * 3))
+        resultStateTransformer2 = functionStateTransformer2 <*> valueStateTransformer
