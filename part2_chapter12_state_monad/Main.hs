@@ -22,6 +22,7 @@ instance Functor StateTransformer where
     fmap function transformer = S (\state1 ->
         let (x, state2) = apply transformer state1 in (function x, state2))
 
+-- applicative
 instance Applicative StateTransformer where
     -- pure :: a -> StateTransformer a
     pure x = S (\y -> (x, y))
@@ -29,6 +30,14 @@ instance Applicative StateTransformer where
     functionStateTransformer <*> valueStateTransformer = S (\state1 ->
         let (f, state2) = apply functionStateTransformer state1
             (x, state3) = apply valueStateTransformer state2 in (f x, state3))
+
+-- monad
+instance Monad StateTransformer where
+    -- return :: a -> StateTransformer a
+    return = pure
+    -- (>>=) :: (StateTransformer a) -> (a -> StateTransformer b) -> (StateTransformer b)
+    valueStateTransformer >>= function = S (\state1 ->
+        let (value, state2) = apply valueStateTransformer state1 in apply (function value) state2)
 
 main = do
     putStrLn "Ad hoc simple value state transformer applied (StateTransformer type not used):"
@@ -58,6 +67,14 @@ main = do
     -- 3. (+2) is applied to the state (now the state is 5) and the state transformer's previous version of the state (3) gets incremented by 1. The result is (4, 5)
     -- 4. now the function from step 2 (*2) can finally be applied to the value from step 3 (4), resulting in (8, 5)
 
+    putStrLn ""
+    putStrLn "Monad implementation for StateTransformer:"
+    putStrLn . show $ apply ((valueStateTransformer) >>= lambda) (1 :: Int)
+
+    -- ^^^ order of operations:
+    -- 1. starting state is 1
+    -- 2. valueStateTransformer gets applied resulting in (2, 3)
+    -- 3. lambda gets applied to the value of the previous computation forming a new state transformer which gets applied to the last version of the state resulting in (3, 9)
 
     where
         valueStateTransformer = S (\x -> (x + 1, x + 2))
@@ -65,3 +82,4 @@ main = do
         resultStateTransformer1 = functionStateTransformer1 <*> valueStateTransformer
         functionStateTransformer2 = S (\x -> ((\y -> y * 2), x * 3))
         resultStateTransformer2 = functionStateTransformer2 <*> valueStateTransformer
+        lambda = (\x -> S (\y -> (x + 1, y * 3)))
