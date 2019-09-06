@@ -6,6 +6,29 @@
 -- ghci
 --
 -- :load Main
+type State = Int
+
+newtype StateTransformer a = S (State -> (a, State))
+
+-- Is this weird/clever or am I just tired?
+apply :: StateTransformer a -> State -> (a, State)
+apply (S transformer) state = transformer state
+
+-- functor
+instance Functor StateTransformer where
+    -- fmap :: (a -> b) -> StateTransformer a -> StateTransformer b
+    fmap function transformer = S (\state1 ->
+        let (x, state2) = apply transformer state1 in (function x, state2))
+
+-- applicative
+instance Applicative StateTransformer where
+    -- pure :: a -> StateTransformer a
+    pure x = S (\y -> (x, y))
+    -- (<*>) :: StateTransformer (a -> b) -> StateTransformer a -> StateTransformer b
+    functionStateTransformer <*> valueStateTransformer = S (\state1 ->
+        let (f, state2) = apply functionStateTransformer state1
+            (x, state3) = apply valueStateTransformer state2 in (f x, state3))
+
 main = do
     putStrLn "New tree:"
     putStrLn . show $ newTree
@@ -13,6 +36,10 @@ main = do
     putStrLn ""
     putStrLn "Relabelled new tree:"
     putStrLn . show $ relabel newTree 0
+
+    putStrLn ""
+    putStrLn "Relabelled new tree, applicative style:"
+    putStrLn . show $ apply (applicativeRelabel newTree) 0
 
 data Tree a = Leaf a | Node (Tree a) (Tree a) deriving Show
 
@@ -32,3 +59,11 @@ relabel (Node left right) n =
     where
         (relabelledLeftTree, nLeft) = relabel left n
         (relabelledRightTree, nRight) = relabel right nLeft
+
+-- applicative relabel version
+fresh :: StateTransformer Int
+fresh = S (\x -> (x, x + 1))
+
+applicativeRelabel :: Tree a -> StateTransformer (Tree Int)
+applicativeRelabel (Leaf _) = Leaf <$> fresh
+applicativeRelabel (Node left right) = Node <$> applicativeRelabel left <*> applicativeRelabel right
