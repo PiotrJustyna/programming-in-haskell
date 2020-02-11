@@ -10,15 +10,19 @@ main = do
     putStrLn "Monad law 1:"
     putStrLn "return x >>= f = f x"
     putStrLn "---"
-    
+
     putStrLn ""
     putStrLn "Example 1:"
+    putStrLn "---"
+    putStrLn . show $ (Just 5) >>= f
+    putStrLn . show $ f 5
+
+    putStrLn ""
+    putStrLn "Example 2 (do notation):" -- I am not super convinced it illustrates the problem best, though
     putStrLn "---"
     x' <- return 5
     putStrLn . show $ (+1) x'
     putStrLn . show $ (+1) 5
 
-    -- putStrLn ""
-    -- putStrLn "Example 2:"
-    -- putStrLn "---"
-    -- putStrLn . show $ (pure id) <*> maybeAWord
+    where
+        f = (\x -> Just (x + 1))
