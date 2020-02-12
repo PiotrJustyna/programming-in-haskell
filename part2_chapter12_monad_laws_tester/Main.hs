@@ -24,5 +24,21 @@ main = do
     putStrLn . show $ (+1) x'
     putStrLn . show $ (+1) 5
 
+    putStrLn "Monad law 2:"
+    putStrLn "mx >>= return = mx"
+    putStrLn "---"
+
+    putStrLn ""
+    putStrLn "Example 1:"
+    putStrLn "---"
+    putStrLn . show $ (Just 5) >>= return
+    putStrLn . show $ (Just 5)
+
+    putStrLn ""
+    putStrLn "Example 2:"
+    putStrLn "---"
+    putStrLn . show $ (Nothing :: Maybe Int) >>= return
+    putStrLn . show $ (Nothing :: Maybe Int)
+
     where
         f = (\x -> Just (x + 1))
