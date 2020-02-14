@@ -40,5 +40,16 @@ main = do
     putStrLn . show $ (Nothing :: Maybe Int) >>= return
     putStrLn . show $ (Nothing :: Maybe Int)
 
+    putStrLn "Monad law 3:"
+    putStrLn "(mx >>= f) >>= g = mx >>= (\\x -> (f x >>= g))"
+    putStrLn "---"
+
+    putStrLn ""
+    putStrLn "Example 1:"
+    putStrLn "---"
+    putStrLn . show $ ((Just 5) >>= f) >>= g
+    putStrLn . show $ (Just 5) >>= (\x -> (f x >>= g))
+
     where
         f = (\x -> Just (x + 1))
+        g = (\x -> Just (x * 2))
