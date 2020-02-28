@@ -34,4 +34,4 @@ main = do
     -- (<*>) :: (r -> a -> b) -> (r -> a) -> (r -> b)
     -- Example:
     putStrLn . show $ (<*>) (\x y -> x) (+1) 4      -- 4
-    putStrLn . show $ (<*>) (\x y -> x + y) (+1) 4  -- 9
+    putStrLn . show $ (\x y -> x + y) <*> (+1) $ 4  -- 9
