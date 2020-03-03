@@ -1,0 +1,1 @@
+-- This is already solved in part2_chapter12_applicative_laws_tester
