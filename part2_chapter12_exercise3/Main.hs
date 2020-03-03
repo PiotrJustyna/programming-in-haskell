@@ -21,7 +21,6 @@
 --     pure  :: a -> f a
 --     (<*>) :: f (a -> b) -> f a -> f b
 
--- TODO
 main = do
     -- since in our case (f is 'r ->'):
     -- pure :: a -> r -> a
