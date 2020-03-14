@@ -35,6 +35,15 @@ instance Monad Parser where
         [] -> []
         [(value, out)] -> parse (functionToParser value) out)
 
+instance Alternative Parser where
+    -- empty :: Parser a
+    empty = P (\inp -> [])
+
+    -- (<|>) :: Parser a -> Parser a -> Parser a
+    p <|> q = P (\inp -> case parse p inp of
+        [] -> parse q inp
+        [(v, out)] -> [(v, out)])
+
 parse :: Parser a -> String -> [(a, String)]
 parse (P p) inp = p inp
 
@@ -75,3 +84,8 @@ main = do
     putStrLn . show $ parse (return '1') "abc"
     putStrLn . show $ parse (item >>= (\x -> crappyParser)) "abcdef"
     putStrLn . show $ parse (item >>= uselessParser) "abcdef"
+
+    putStrLn "Alternative:"
+    putStrLn . show $ ((parse empty "abc") :: [(String, String)])
+    putStrLn . show $ parse (item <|> return 'd') "abc"
+    putStrLn . show $ parse (empty <|> return 'd') "abc"
